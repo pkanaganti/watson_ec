@@ -32,19 +32,25 @@ def post_list(request):
         translation = language_translator.translate(
             text=post.text, model_id='en-es').get_result()
         obj = (json.dumps(translation, indent=2, ensure_ascii=False))
-        print(obj)
+        # print(obj)
         obj2 = json.loads(obj)
         post.obj2 = obj2['translations'][0]['translation']
         post.w_count = obj2['word_count']
         post.c_count = obj2['character_count']
-        tone_analysis = tone_analyzer.tone(
-            {'text': posting},
-            content_type='application/json'
-        ).get_result()
-        tone2 = str(tone_analysis)
-        post.tone3 = (tone2[1:500])
+        tone_input = ToneInput(post.text)
+        tone = tone_analyzer.tone(tone_input=tone_input, content_type="application/json")
+        tone2 = str(tone)
+        tone2_data = json.loads(tone2)
+        json_data = tone2_data['result'].get('document_tone').get('tones')
+        tone_name = 'Not Found'
+        tone_score = 'Not Found'
+        for tone_id in json_data:
+            tone_name = tone_id.get('tone_name')
+            tone_score = tone_id.get('score')
+        post.tone_name = tone_name
+        post.tone_score = tone_score
+        post.tone3 = tone2_data['result'].get('sentences_tone')
         print(post.tone3)
-        print(json.dumps(tone_analysis, indent=2))
     return render(request, 'blog/post_list.html', {'posts': posts})
 
 
