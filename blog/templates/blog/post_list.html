@@ -1,0 +1,22 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    {% for post in posts %}
+        <div class="post">
+            <div class="date">
+                {{ post.published_date }}
+            </div>
+            <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
+           	<p>{{ post.text|linebreaksbr }}</p><span style="background-color:yellow"><b>Watson Says:</b></span>
+           	<p><i><u>Translation to Spanish:</u></i> {{ post.obj2}}</p>
+           	<p>Word Count: {{ post.w_count}} |
+           	Letter Count: {{ post.c_count}}</p>
+           <p> Tone Analyzer Results:  {{ post.tone3}}
+
+
+
+           	</p>
+
+        </div>
+    {% endfor %}
+{% endblock %}
